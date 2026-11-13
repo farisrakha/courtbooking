@@ -1,0 +1,26 @@
+@import "tailwindcss";
+
+/* INA Sports brand tokens, lifted from inasports.vercel.app (see PRODUCT.md). */
+@theme inline {
+  --font-sans: var(--font-dm-sans), ui-sans-serif, system-ui, sans-serif;
+
+  --color-integrity: #212163;      /* navy: primary, headings, selected */
+  --color-integrity-deep: #14143f; /* footer, hero overlay */
+  --color-integrity-soft: #ecebf5; /* selected/hover tint */
+  --color-ink: #16163a;            /* body text */
+  --color-muted: #5b5b78;          /* secondary text, AA on white */
+  --color-line: #e2e2ea;
+  --color-platinum: #f3f3f3;       /* page surface */
+  --color-victory: #d60000;        /* red: primary CTA, accents only */
+  --color-victory-dark: #a80000;
+  --color-ok: #13805f;             /* available / success */
+  --color-ok-soft: #e6f4ef;
+}
+
+html { scroll-behavior: smooth; }
+body { background: #fff; color: var(--color-ink); }
+
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  *, *::before, *::after { transition: none !important; animation: none !important; }
+}
