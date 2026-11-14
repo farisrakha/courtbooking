@@ -14,8 +14,10 @@ npm run check                # assert-based check of pricing/voucher/date logic 
 npx tsc --noEmit             # type-check; run `npx next typegen` first if PageProps/LayoutProps types are missing
 npm run lint
 npm run build                # production build; also prints which routes are static vs partial prerender
-vercel --prod                # deploy (only after the user asks)
+vercel --prod                # manual production deploy (only when asked; pushes to main already deploy)
 ```
+
+Production: https://courtbooking-liard.vercel.app (Vercel project `courtbooking`, linked to github.com/farisrakha/courtbooking; every push to `main` deploys automatically).
 
 There is no test framework. `npm run check` is the only test: plain Node 24 running a `.ts` file (type stripping), which is why `tsconfig.json` sets `allowImportingTsExtensions`.
 
