@@ -1,0 +1,600 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>INA Sports Booking PRD</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #ffffff; --surface: #f3f3f3; --card: #ffffff; --ink: #16163a; --muted: #5b5b78; --line: #e2e2ea;
+    --brand: #212163; --brand-deep: #14143f; --brand-soft: #ecebf5; --accent: #d60000;
+    --ok: #13805f; --ok-soft: #e6f4ef; --warn: #8a5300; --warn-soft: #fdf1dc;
+    color-scheme: light;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #0e0e22; --surface: #17173a; --card: #141432; --ink: #ececf5; --muted: #a6a6c4; --line: #2b2b55;
+      --brand: #b9b8f5; --brand-deep: #0a0a1c; --brand-soft: #222250; --accent: #ff6b6b;
+      --ok: #5fd3a8; --ok-soft: #12352b; --warn: #ffc56b; --warn-soft: #3a2a10;
+      color-scheme: dark;
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #0e0e22; --surface: #17173a; --card: #141432; --ink: #ececf5; --muted: #a6a6c4; --line: #2b2b55;
+    --brand: #b9b8f5; --brand-deep: #0a0a1c; --brand-soft: #222250; --accent: #ff6b6b;
+    --ok: #5fd3a8; --ok-soft: #12352b; --warn: #ffc56b; --warn-soft: #3a2a10;
+    color-scheme: dark;
+  }
+
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
+  body { margin: 0; background: var(--bg); color: var(--ink); font: 16px/1.6 "DM Sans", system-ui, sans-serif; }
+  a { color: var(--brand); }
+  h1, h2, h3, h4 { line-height: 1.25; color: var(--brand); margin: 0; }
+  h2 { font-size: 1.6rem; margin-bottom: .75rem; }
+  h3 { font-size: 1.2rem; }
+  h4 { font-size: .8rem; text-transform: uppercase; letter-spacing: .06em; color: var(--muted); margin: 1.4rem 0 .5rem; }
+  p { margin: 0 0 .8rem; }
+  code { font-family: ui-monospace, "SF Mono", Menlo, monospace; font-size: .86em; background: var(--surface); padding: .1em .35em; border-radius: 4px; overflow-wrap: anywhere; }
+  ul, ol { margin: 0 0 .8rem; padding-left: 1.25rem; }
+  li { margin: .25rem 0; }
+
+  /* Header */
+  .top { background: #14143f; color: #f3f3f3; }
+  .top-inner { max-width: 1160px; margin: 0 auto; padding: 40px 16px 36px; }
+  .top img { height: 34px; display: block; margin-bottom: 28px; }
+  .top h1 { color: #fff; font-size: clamp(1.8rem, 4vw, 2.6rem); max-width: 22ch; }
+  .top p.lead { color: #cfcfe6; max-width: 60ch; margin-top: .8rem; font-size: 1.05rem; }
+  .meta { display: flex; flex-wrap: wrap; gap: 8px 20px; margin-top: 22px; font-size: .9rem; color: #cfcfe6; }
+  .meta b { color: #fff; font-weight: 600; }
+  .stripe { height: 4px; background: #d60000; }
+
+  /* Layout */
+  .wrap { max-width: 1160px; margin: 0 auto; padding: 32px 16px 80px; display: grid; grid-template-columns: minmax(0, 1fr); gap: 32px; }
+  @media (min-width: 960px) { .wrap { grid-template-columns: 230px minmax(0, 1fr); gap: 48px; } }
+  nav.toc { font-size: .92rem; }
+  nav.toc details { border: 1px solid var(--line); border-radius: 12px; padding: 10px 14px; background: var(--card); }
+  nav.toc summary { cursor: pointer; font-weight: 600; color: var(--brand); }
+  nav.toc ol { list-style: none; padding: 0; margin: 10px 0 0; }
+  nav.toc li { margin: 0; }
+  nav.toc a { display: block; padding: 5px 8px; border-radius: 8px; text-decoration: none; color: var(--ink); }
+  nav.toc a:hover { background: var(--brand-soft); color: var(--brand); }
+  nav.toc ol ol { padding-left: 12px; margin: 0; }
+  nav.toc ol ol a { color: var(--muted); font-size: .88rem; }
+  @media (min-width: 960px) {
+    nav.toc > details { position: sticky; top: 24px; border: 0; padding: 0; background: none; }
+    nav.toc summary { list-style: none; pointer-events: none; font-size: .75rem; text-transform: uppercase; letter-spacing: .08em; color: var(--muted); }
+    nav.toc summary::-webkit-details-marker { display: none; }
+  }
+
+  main section { scroll-margin-top: 20px; padding-bottom: 40px; margin-bottom: 40px; border-bottom: 1px solid var(--line); }
+  main section:last-child { border-bottom: 0; }
+  .eyebrow { font-size: .75rem; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; color: var(--accent); margin-bottom: .3rem; }
+
+  .grid2 { display: grid; gap: 16px; grid-template-columns: minmax(0, 1fr); }
+  @media (min-width: 720px) { .grid2 { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+  .box { background: var(--card); border: 1px solid var(--line); border-radius: 16px; padding: 20px; }
+  .box.soft { background: var(--surface); border-color: transparent; }
+  .box h3 { margin-bottom: .5rem; }
+
+  .metric { display: grid; gap: 12px; grid-template-columns: minmax(0, 1fr); }
+  @media (min-width: 720px) { .metric { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+  .metric .box b { display: block; font-size: 1.5rem; color: var(--brand); line-height: 1.2; }
+  .metric .box span { font-size: .9rem; color: var(--muted); }
+
+  /* Chips */
+  .chip { display: inline-block; font-size: .72rem; font-weight: 600; padding: .2em .65em; border-radius: 999px; vertical-align: middle; white-space: nowrap; }
+  .chip.built { background: var(--ok-soft); color: var(--ok); }
+  .chip.new { background: var(--brand-soft); color: var(--brand); }
+  .chip.changed { background: var(--warn-soft); color: var(--warn); }
+  .chip.p0 { border: 1px solid var(--accent); color: var(--accent); }
+  .chip.p1 { border: 1px solid var(--line); color: var(--muted); }
+
+  /* Tables */
+  .table { overflow-x: auto; border: 1px solid var(--line); border-radius: 12px; margin: .5rem 0 1rem; }
+  table { width: 100%; border-collapse: collapse; font-size: .92rem; }
+  th, td { text-align: left; padding: 10px 12px; border-bottom: 1px solid var(--line); vertical-align: top; }
+  th { background: var(--surface); font-weight: 600; color: var(--brand); font-size: .82rem; }
+  tr:last-child td { border-bottom: 0; }
+  td.num { text-align: right; white-space: nowrap; font-variant-numeric: tabular-nums; }
+
+  /* Journey */
+  .journey { list-style: none; padding: 0; margin: 1rem 0; display: flex; flex-wrap: wrap; gap: 10px; align-items: stretch; counter-reset: step; }
+  .journey li { margin: 0; flex: 1 1 140px; position: relative; background: var(--card); border: 1px solid var(--line); border-radius: 12px; padding: 12px 12px 12px 14px; counter-increment: step; }
+  .journey li::before { content: counter(step); display: inline-grid; place-items: center; width: 22px; height: 22px; border-radius: 50%; background: var(--brand); color: var(--bg); font-size: .75rem; font-weight: 700; margin-bottom: 6px; }
+  .journey li.gate { border: 2px dashed var(--accent); }
+  .journey li.gate::before { background: var(--accent); }
+  .journey b { display: block; color: var(--brand); }
+  .journey small { color: var(--muted); display: block; line-height: 1.4; }
+  .journey code { font-size: .78em; }
+
+  /* Flow cards */
+  .flow { background: var(--card); border: 1px solid var(--line); border-radius: 16px; padding: 22px; margin: 0 0 24px; scroll-margin-top: 20px; }
+  .flow-head { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 10px; margin-bottom: .6rem; }
+  .flow-head h3 { margin-right: auto; }
+  .story { border-left: 4px solid var(--brand); background: var(--brand-soft); padding: 10px 14px; border-radius: 0 10px 10px 0; margin: .4rem 0 1rem; }
+  .ac { list-style: none; padding: 0; }
+  .ac li { padding: 10px 12px; border: 1px solid var(--line); border-radius: 10px; margin: 8px 0; font-size: .93rem; }
+  .ac li b { color: var(--brand); font-weight: 600; }
+  .copy td:last-child { font-style: italic; }
+
+  .callout { border: 1px solid var(--line); border-left: 4px solid var(--accent); border-radius: 0 12px 12px 0; padding: 12px 16px; background: var(--card); margin: 1rem 0; font-size: .95rem; }
+
+  footer { text-align: center; color: var(--muted); font-size: .85rem; padding: 0 16px 40px; }
+
+  @media print {
+    nav.toc, .stripe { display: none; }
+    .wrap { display: block; }
+    .flow, .box { break-inside: avoid; }
+    .top { background: none; color: #000; } .top h1 { color: #14143f; } .top p.lead, .meta, .meta b { color: #333; } .top img { display: none; }
+  }
+</style>
+</head>
+<body>
+
+<header class="top">
+  <div class="top-inner">
+    <img src="../public/brand/logo-light.svg" alt="INA Sports">
+    <h1>Product Requirements: Court Booking</h1>
+    <p class="lead">One place for players in Jakarta to create an account, find a free hour on a state-run court in Senayan or Cibubur, pay with a method they already use, and find the booking again later.</p>
+    <div class="meta">
+      <span>Version <b>0.1</b></span>
+      <span>Status <b>Draft</b></span>
+      <span>Date <b>13 Nov 2026</b></span>
+      <span>Owner <b>TBD (LPUK Kemenpora)</b></span>
+    </div>
+  </div>
+</header>
+<div class="stripe" aria-hidden="true"></div>
+
+<div class="wrap">
+  <nav class="toc" aria-label="Contents">
+    <details open>
+      <summary>Contents</summary>
+      <ol>
+        <li><a href="#overview">1. Overview</a></li>
+        <li><a href="#scope">2. Scope</a></li>
+        <li><a href="#personas">3. Personas</a></li>
+        <li><a href="#journey">4. End-to-end journey</a></li>
+        <li><a href="#flows">5. Flows</a>
+          <ol>
+            <li><a href="#f1">F1 Register</a></li>
+            <li><a href="#f2">F2 Login &amp; logout</a></li>
+            <li><a href="#f3">F3 Browse &amp; pick a slot</a></li>
+            <li><a href="#f4">F4 Checkout &amp; pay</a></li>
+            <li><a href="#f5">F5 Confirmation</a></li>
+            <li><a href="#f6">F6 Booking history</a></li>
+            <li><a href="#f7">F7 Profile</a></li>
+          </ol>
+        </li>
+        <li><a href="#data">6. Data model</a></li>
+        <li><a href="#nfr">7. Non-functional</a></li>
+        <li><a href="#questions">8. Open questions</a></li>
+        <li><a href="#release">9. Release plan</a></li>
+      </ol>
+    </details>
+  </nav>
+
+  <main>
+
+    <!-- 1 -->
+    <section id="overview">
+      <p class="eyebrow">01</p>
+      <h2>Overview</h2>
+      <div class="grid2">
+        <div class="box soft">
+          <h3>Problem</h3>
+          <p>Booking a court at Senayan or Cibubur today means calling or walking to the venue desk. Players can't see which hours are free, can't pay up front, and have no record of what they booked.</p>
+        </div>
+        <div class="box soft">
+          <h3>Goal</h3>
+          <p>A player can go from "I want to play tonight" to a paid booking code in under 3 minutes on a phone, and can always find that booking again in their account.</p>
+        </div>
+      </div>
+      <h4>Who it's for</h4>
+      <p>Players and amateur teams in Jakarta who want an hour on a court at a state-run venue. They are usually on a phone, often booking for tonight or this weekend, and comparing price and free hours at a glance.</p>
+      <h4>Success metrics (first 90 days after launch)</h4>
+      <div class="metric">
+        <div class="box"><b>≥ 45%</b><span>of players who pick a slot finish payment (slot pick → paid)</span></div>
+        <div class="box"><b>≤ 20%</b><span>drop-off at the login gate during checkout</span></div>
+        <div class="box"><b>≥ 30%</b><span>of paying accounts book again within 30 days</span></div>
+      </div>
+      <p style="color:var(--muted);font-size:.9rem">Targets are starting points to be confirmed once there is baseline data.</p>
+    </section>
+
+    <!-- 2 -->
+    <section id="scope">
+      <p class="eyebrow">02</p>
+      <h2>Scope</h2>
+      <p>The clickable prototype (v1) already covers browsing, the slot grid, checkout, confirmation and a browser-only booking list. This PRD adds accounts and moves bookings to a server. Each feature is tagged:
+        <span class="chip built">Built in v1</span> <span class="chip changed">v1 + changes</span> <span class="chip new">New</span>
+      </p>
+      <div class="table">
+        <table>
+          <thead><tr><th>Feature</th><th>Status</th><th>Priority</th></tr></thead>
+          <tbody>
+            <tr><td>Register with Google or email + password</td><td><span class="chip new">New</span></td><td><span class="chip p0">P0</span></td></tr>
+            <tr><td>Login, logout, forgot password</td><td><span class="chip new">New</span></td><td><span class="chip p0">P0</span></td></tr>
+            <tr><td>Browse venues, filter by sport &amp; location</td><td><span class="chip built">Built in v1</span></td><td><span class="chip p0">P0</span></td></tr>
+            <tr><td>Date strip + court × hour grid, one 1-hour slot</td><td><span class="chip built">Built in v1</span></td><td><span class="chip p0">P0</span></td></tr>
+            <tr><td>Login gate at checkout, slot kept across login</td><td><span class="chip new">New</span></td><td><span class="chip p0">P0</span></td></tr>
+            <tr><td>Checkout: player details, payment method, voucher, cost breakdown</td><td><span class="chip changed">v1 + changes</span></td><td><span class="chip p0">P0</span></td></tr>
+            <tr><td>Slot hold during payment, server-side double-booking guard</td><td><span class="chip new">New</span></td><td><span class="chip p0">P0</span></td></tr>
+            <tr><td>Confirmation with booking code &amp; receipt</td><td><span class="chip built">Built in v1</span></td><td><span class="chip p0">P0</span></td></tr>
+            <tr><td>Booking history tied to the account</td><td><span class="chip changed">v1 + changes</span></td><td><span class="chip p0">P0</span></td></tr>
+            <tr><td>Cancel a booking (≥ 2 hours before start)</td><td><span class="chip new">New</span></td><td><span class="chip p1">P1</span></td></tr>
+            <tr><td>"Pesan lagi" (rebook the same court)</td><td><span class="chip new">New</span></td><td><span class="chip p1">P1</span></td></tr>
+            <tr><td>Email + WhatsApp confirmation</td><td><span class="chip new">New</span></td><td><span class="chip p1">P1</span></td></tr>
+            <tr><td>Profile page</td><td><span class="chip new">New</span></td><td><span class="chip p1">P1</span></td></tr>
+          </tbody>
+        </table>
+      </div>
+      <h4>Out of scope for this release</h4>
+      <ul>
+        <li>Venue/admin console (managing courts, prices, closures). Prices stay in code until LPUK provides the tariff.</li>
+        <li>Multi-hour, recurring or membership bookings. One booking = one court for one hour.</li>
+        <li>Ratings, reviews, social features, splitting the bill.</li>
+        <li>Payment-gateway integration details (covered in a separate tech spec once the provider is chosen).</li>
+        <li>English UI. The app is Indonesian only.</li>
+      </ul>
+    </section>
+
+    <!-- 3 -->
+    <section id="personas">
+      <p class="eyebrow">03</p>
+      <h2>Personas</h2>
+      <div class="grid2">
+        <div class="box">
+          <h3>Rina, weekday player</h3>
+          <p>28, office worker in Sudirman. Plays badminton twice a week after work with 3 friends. Books on her phone during the commute, usually for the same evening.</p>
+          <p style="margin:0"><b>Needs:</b> see free hours fast, pay with QRIS or GoPay, show a code at the desk. <b>Frustration:</b> having to call and being told the slot is gone.</p>
+        </div>
+        <div class="box">
+          <h3>Bayu, team captain</h3>
+          <p>34, organises a weekend futsal/basket group at GOR POPKI. Books a week ahead and collects money from the team afterwards.</p>
+          <p style="margin:0"><b>Needs:</b> a receipt to share in the team WhatsApp group, a list of past bookings, cancel if the team can't make it. <b>Frustration:</b> losing track of what was booked and paid.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- 4 -->
+    <section id="journey">
+      <p class="eyebrow">04</p>
+      <h2>End-to-end journey</h2>
+      <p>Players can browse and pick a slot without an account. The login gate (dashed red) appears only when they press <i>Lanjut ke pembayaran</i>. After login or registering, they land back on checkout with the same slot.</p>
+      <ol class="journey">
+        <li><b>Beranda</b><small>Hero, search, venue grid</small><code>/</code></li>
+        <li><b>Detail venue</b><small>Date strip + court × hour grid</small><code>/venue/[slug]</code></li>
+        <li class="gate"><b>Masuk / Daftar</b><small>Only if not logged in. Returns to checkout.</small><code>/masuk?next=…</code></li>
+        <li><b>Pembayaran</b><small>Details, method, voucher, pay</small><code>/checkout</code></li>
+        <li><b>Booking berhasil</b><small>Code + receipt</small><code>/booking/[id]</code></li>
+        <li><b>Booking Saya</b><small>Upcoming, past, cancelled</small><code>/bookings</code></li>
+      </ol>
+      <p>From <b>Booking Saya</b> a player can open a booking's detail, download the receipt again, cancel it (if allowed), or book the same court again. <b>Profil</b> (<code>/profil</code>) and <b>Keluar</b> are in the header menu once logged in.</p>
+      <div class="callout"><b>Header states.</b> Logged out: <i>Cari Lapangan</i> · <i>Masuk</i> (outline) · <i>Daftar</i> (navy). Logged in: <i>Cari Lapangan</i> · <i>Booking Saya</i> · avatar menu (<i>Profil</i>, <i>Keluar</i>). Red stays reserved for the one main action on each screen.</div>
+    </section>
+
+    <!-- 5 -->
+    <section id="flows">
+      <p class="eyebrow">05</p>
+      <h2>Flows</h2>
+      <p>Each flow lists the user story, the steps, acceptance criteria, edge cases and the key Indonesian UI copy.</p>
+
+      <!-- F1 -->
+      <article class="flow" id="f1">
+        <div class="flow-head"><h3>F1 · Register</h3><span class="chip new">New</span><span class="chip p0">P0</span></div>
+        <p><code>/daftar</code> (also reachable from the checkout login gate with <code>?next=</code>)</p>
+        <p class="story">As a new player, I want to create an account in under a minute, so that my bookings are saved and I don't retype my details every time.</p>
+        <h4>Steps</h4>
+        <ol>
+          <li>Player taps <i>Daftar</i> in the header, or <i>Daftar</i> on the login gate.</li>
+          <li>Choose <b>Lanjutkan dengan Google</b>, or fill the email form: nama lengkap, email, nomor WhatsApp, kata sandi (min. 8 characters, at least one letter and one number), checkbox to accept Syarat &amp; Ketentuan and Kebijakan Privasi.</li>
+          <li><b>Google path:</b> name and email come from Google. If the account has no phone number yet, ask for nomor WhatsApp on one short screen, then done. Google emails count as verified.</li>
+          <li><b>Email path:</b> account is created as <i>unverified</i>; a verification email is sent. The player is logged in straight away and can browse, but must verify before paying.</li>
+          <li>Player clicks the link in the email (valid 24 hours) → "Email terverifikasi" → redirect to <code>next</code> or home.</li>
+        </ol>
+        <h4>Acceptance criteria</h4>
+        <ul class="ac">
+          <li><b>Given</b> a valid form, <b>when</b> the player submits, <b>then</b> the account is created, a verification email is sent within 1 minute, and the player is logged in.</li>
+          <li><b>Given</b> the player came from checkout, <b>when</b> registration finishes, <b>then</b> they return to <code>/checkout</code> with the same venue, court, date and hour.</li>
+          <li><b>Given</b> an unverified email account, <b>when</b> the player presses <i>Bayar</i>, <b>then</b> payment is blocked with a banner to verify and a <i>Kirim ulang</i> button.</li>
+          <li><b>Given</b> a phone number, <b>then</b> it must match Indonesian mobile format <code>(\+62|62|0)8[0-9]{7,12}</code> and is stored as <code>+62…</code>.</li>
+          <li>Every field has a visible label; errors appear under the field and are announced to screen readers.</li>
+        </ul>
+        <h4>Edge cases</h4>
+        <ul>
+          <li>Email already registered → inline error with a link to <i>Masuk</i> (don't reveal whether it was Google or password).</li>
+          <li>Google email matches an existing password account → ask for that account's password once, then link Google to it.</li>
+          <li>Verification link expired or used → "Tautan sudah tidak berlaku" with <i>Kirim ulang</i>. Resend is limited to once per 60 seconds.</li>
+          <li>Player closes the Google popup → stay on the form, no error.</li>
+        </ul>
+        <h4>UI copy</h4>
+        <div class="table copy"><table>
+          <tr><th>Element</th><th>Copy</th></tr>
+          <tr><td>Page title</td><td>Buat akun INA Sports</td></tr>
+          <tr><td>Google button</td><td>Lanjutkan dengan Google</td></tr>
+          <tr><td>Primary button</td><td>Daftar</td></tr>
+          <tr><td>Email taken</td><td>Email ini sudah terdaftar. Masuk saja?</td></tr>
+          <tr><td>Verify banner</td><td>Cek email kamu untuk verifikasi akun sebelum membayar.</td></tr>
+        </table></div>
+      </article>
+
+      <!-- F2 -->
+      <article class="flow" id="f2">
+        <div class="flow-head"><h3>F2 · Login &amp; logout</h3><span class="chip new">New</span><span class="chip p0">P0</span></div>
+        <p><code>/masuk</code>, <code>/lupa-sandi</code>, <code>/atur-sandi?token=…</code></p>
+        <p class="story">As a returning player, I want to log in quickly, ideally with Google, so that I can pay and see my bookings.</p>
+        <h4>Steps</h4>
+        <ol>
+          <li>Player taps <i>Masuk</i> in the header, or hits the login gate from <i>Lanjut ke pembayaran</i>. The gate shows a short summary of the chosen slot so the player knows it isn't lost.</li>
+          <li>Choose <b>Lanjutkan dengan Google</b> or enter email + kata sandi. <i>Ingat saya</i> is on by default.</li>
+          <li>On success, redirect to <code>next</code> (checkout) or home.</li>
+          <li><b>Forgot password:</b> <i>Lupa kata sandi?</i> → enter email → reset link (valid 1 hour) → set a new password → logged in.</li>
+          <li><b>Logout:</b> avatar menu → <i>Keluar</i> → back to home, header shows <i>Masuk</i>.</li>
+        </ol>
+        <h4>Acceptance criteria</h4>
+        <ul class="ac">
+          <li><b>Given</b> correct credentials, <b>when</b> the player logs in from the gate, <b>then</b> checkout opens with the same slot and the player fields prefilled from the profile.</li>
+          <li><b>Given</b> wrong credentials, <b>then</b> one generic error is shown ("Email atau kata sandi salah") without saying which part was wrong.</li>
+          <li><b>Given</b> 5 failed attempts in 15 minutes for one email, <b>then</b> further attempts are blocked for 15 minutes and the screen says so.</li>
+          <li><b>Given</b> <i>Ingat saya</i>, the session lasts 30 days; without it, it ends when the browser closes.</li>
+          <li><b>Given</b> any reset request, the screen always says "Kalau email terdaftar, tautan sudah dikirim", so it can't be used to check which emails have accounts.</li>
+          <li><code>next</code> only accepts paths on this site (starting with <code>/</code>), never an external URL.</li>
+        </ul>
+        <h4>Edge cases</h4>
+        <ul>
+          <li>Slot became taken while the player was logging in → checkout shows "Slot ini baru saja dipesan orang lain" with a button back to the venue grid.</li>
+          <li>Account created with Google tries email + password → hint: "Akun ini memakai Google. Lanjutkan dengan Google."</li>
+          <li>Session expires mid-checkout → keep form input, show the gate, return to the same checkout.</li>
+        </ul>
+        <h4>UI copy</h4>
+        <div class="table copy"><table>
+          <tr><th>Element</th><th>Copy</th></tr>
+          <tr><td>Gate title</td><td>Masuk dulu untuk lanjut bayar</td></tr>
+          <tr><td>Gate subtitle</td><td>Slot kamu tetap tersimpan: Lapangan A · Sab, 14 Nov · 09.00–10.00</td></tr>
+          <tr><td>Primary button</td><td>Masuk</td></tr>
+          <tr><td>Switch link</td><td>Belum punya akun? Daftar</td></tr>
+          <tr><td>Lockout</td><td>Terlalu banyak percobaan. Coba lagi dalam 15 menit.</td></tr>
+        </table></div>
+      </article>
+
+      <!-- F3 -->
+      <article class="flow" id="f3">
+        <div class="flow-head"><h3>F3 · Browse &amp; pick a slot</h3><span class="chip built">Built in v1</span><span class="chip p0">P0</span></div>
+        <p><code>/</code> → <code>/venue/[slug]</code></p>
+        <p class="story">As a player, I want to see which hours are free on which court, so that I can grab one in a couple of taps.</p>
+        <h4>Steps</h4>
+        <ol>
+          <li>Home: hero carousel (one slide per sport), search card (text, location select, sport chips), venue grid with count.</li>
+          <li>Venue card: photo, sport badge, location, opening hours, max players, "Mulai Rp…/jam", <i>Pesan</i>.</li>
+          <li>Venue detail: gallery, description, amenities. Date strip shows today + next 6 days.</li>
+          <li>Court × hour grid: each cell shows price and state (<i>Tersedia</i>, <i>Dipilih</i>, <i>Penuh</i>, <i>Lewat</i>). Player picks <b>one</b> 1-hour slot.</li>
+          <li>Summary (court, date, hour, total) appears and <i>Lanjut ke pembayaran</i> becomes active.</li>
+        </ol>
+        <h4>Venues at launch</h4>
+        <div class="table"><table>
+          <thead><tr><th>Venue</th><th>Courts</th><th>Hours</th><th>Price / hour*</th></tr></thead>
+          <tbody>
+            <tr><td>Lapangan Tenis Senayan</td><td>3 (2 hard, 1 clay)</td><td>06.00–22.00</td><td class="num">Rp150.000–175.000</td></tr>
+            <tr><td>Lapangan Bulu Tangkis Senayan</td><td>4 (vinyl)</td><td>07.00–23.00</td><td class="num">Rp60.000</td></tr>
+            <tr><td>GOR POPKI Cibubur</td><td>Arena Utama, Lapangan Latihan</td><td>07.00–22.00</td><td class="num">Rp250.000–450.000</td></tr>
+            <tr><td>Lapangan Mini Soccer Cibubur</td><td>1 (synthetic grass)</td><td>06.00–22.00</td><td class="num">Segera hadir</td></tr>
+          </tbody>
+        </table></div>
+        <p style="color:var(--muted);font-size:.9rem">*Placeholder prices until LPUK confirms the official tariff.</p>
+        <h4>Acceptance criteria</h4>
+        <ul class="ac">
+          <li><b>Given</b> today's date, hours that have already started show <i>Lewat</i> and can't be picked.</li>
+          <li><b>Given</b> a slot booked or held by anyone (including the player), it shows <i>Penuh</i>.</li>
+          <li><b>Given</b> a "Segera hadir" venue, its card and page show the badge and no slot grid.</li>
+          <li>The grid is fully keyboard operable and each cell has a label like "Lapangan A, 09.00, tersedia". No sideways page scroll at 375px (the grid scrolls inside its own box).</li>
+        </ul>
+        <h4>Change from v1</h4>
+        <p>Availability comes from the server (real bookings + active holds) instead of the fake 30% generator. Data should refresh when the player returns to the tab.</p>
+      </article>
+
+      <!-- F4 -->
+      <article class="flow" id="f4">
+        <div class="flow-head"><h3>F4 · Checkout &amp; pay</h3><span class="chip changed">v1 + changes</span><span class="chip p0">P0</span></div>
+        <p><code>/checkout?venue=&amp;court=&amp;date=&amp;hour=</code></p>
+        <p class="story">As a player, I want to pay with QRIS, e-wallet, VA or card and know the exact total up front, so that the court is really mine.</p>
+        <h4>Steps</h4>
+        <ol>
+          <li>Login gate if not logged in (F2). Unverified email accounts see the verify banner.</li>
+          <li>Booking summary on the left; on the right <b>Data pemain</b> prefilled from the profile (nama, email, WhatsApp, optional nama tim). Edits here apply to this booking only.</li>
+          <li>Pick a <b>payment method</b> (required).</li>
+          <li>Optional <b>voucher</b> in a collapsible block.</li>
+          <li><b>Rincian biaya</b> updates live. Button reads <i>Bayar Rp X</i>.</li>
+          <li>On <i>Bayar</i>: server re-checks the slot, creates the booking as <i>Menunggu pembayaran</i>, and <b>holds the slot for 10 minutes</b>. Player sees payment instructions (QR code, VA number, e-wallet redirect, or card form) with a countdown.</li>
+          <li>Payment provider confirms → booking becomes <i>Lunas</i> → confirmation page (F5). Hold expires without payment → <i>Kedaluwarsa</i>, slot is free again.</li>
+        </ol>
+        <h4>Payment methods &amp; fees</h4>
+        <div class="table"><table>
+          <thead><tr><th>Method</th><th>Shown as</th><th>Fee to player</th></tr></thead>
+          <tbody>
+            <tr><td>QRIS</td><td>Semua aplikasi bank &amp; e-wallet</td><td class="num">Rp0</td></tr>
+            <tr><td>E-Wallet</td><td>GoPay · DANA · OVO</td><td class="num">Rp0</td></tr>
+            <tr><td>BCA Virtual Account</td><td>Biaya Rp6.000</td><td class="num">Rp6.000</td></tr>
+            <tr><td>Mandiri Virtual Account</td><td>Biaya Rp6.000</td><td class="num">Rp6.000</td></tr>
+            <tr><td>Kartu Debit / Kredit</td><td>Biaya 2,9% + Rp2.000</td><td class="num">2,9% + Rp2.000</td></tr>
+          </tbody>
+        </table></div>
+        <p><b>Voucher:</b> <code>INASPORT10</code> = 10% off the court price, max Rp15.000. Case-insensitive. Discount applies to the court price, not the payment fee. <b>Total</b> = harga sewa + biaya pembayaran − diskon.</p>
+        <h4>Acceptance criteria</h4>
+        <ul class="ac">
+          <li><b>Given</b> two players pay for the same slot at the same moment, <b>then</b> exactly one booking is created; the other sees "Slot ini baru saja dipesan orang lain".</li>
+          <li><b>Given</b> a court of Rp60.000 paid by BCA VA with INASPORT10, <b>then</b> the total is Rp60.000 (60.000 + 6.000 − 6.000).</li>
+          <li><b>Given</b> the URL points to a past, unknown, "Segera hadir" or more-than-6-days-ahead slot, <b>then</b> checkout shows "Slot ini tidak bisa dipesan" and a link back.</li>
+          <li><b>Given</b> the 10-minute hold runs out, <b>then</b> the payment screen says the time is up and offers to pick again; no money is taken.</li>
+          <li>The amount charged by the provider must equal the total shown on screen, calculated on the server.</li>
+        </ul>
+        <h4>Edge cases</h4>
+        <ul>
+          <li>Player leaves during payment → the pending booking is visible in Booking Saya with <i>Lanjutkan bayar</i> until the hold ends.</li>
+          <li>Payment confirmed after the hold expired → auto-refund, or keep the booking if the slot is still free (decide with the payment provider; see open questions).</li>
+          <li>Invalid voucher → "Kode voucher tidak valid." Total unchanged.</li>
+        </ul>
+      </article>
+
+      <!-- F5 -->
+      <article class="flow" id="f5">
+        <div class="flow-head"><h3>F5 · Confirmation</h3><span class="chip built">Built in v1</span><span class="chip p0">P0</span></div>
+        <p><code>/booking/[id]</code></p>
+        <p class="story">As a player, I want a clear booking code and receipt, so that I can show it at the desk and share it with my team.</p>
+        <ul>
+          <li>Success header, <b>booking code</b> (format <code>INA-XXXXXXX</code>), venue + court, date, hour, duration, player and team, payment breakdown, venue rules (come 15 minutes early, bring ID, cancel at least 2 hours ahead).</li>
+          <li><i>Unduh bukti</i> (print / save as PDF) and <i>Booking venue lain</i>.</li>
+          <li><span class="chip new">New</span> Confirmation sent by email and WhatsApp within 1 minute of payment, with the code and a link to this page.</li>
+          <li><span class="chip new">New</span> Page only opens for the account that owns the booking. Others get "Booking tidak ditemukan".</li>
+        </ul>
+      </article>
+
+      <!-- F6 -->
+      <article class="flow" id="f6">
+        <div class="flow-head"><h3>F6 · Booking history</h3><span class="chip changed">v1 + changes</span><span class="chip p0">P0</span></div>
+        <p><code>/bookings</code> (header: <i>Booking Saya</i>) and <code>/booking/[id]</code></p>
+        <p class="story">As a player, I want to see all my bookings in one place, so that I know where to be and when, and can cancel or book again.</p>
+        <h4>Steps</h4>
+        <ol>
+          <li>Logged-out players are sent to the login gate, then back here.</li>
+          <li>Three tabs: <b>Akan datang</b> (soonest first), <b>Selesai</b> (newest first), <b>Dibatalkan</b>.</li>
+          <li>Each row: venue, court, date, hour, booking code, total, status badge. Tap opens the detail page (F5 layout plus actions).</li>
+          <li>Actions on the detail page: <i>Unduh bukti</i>, <i>Lanjutkan bayar</i> (pending only), <i>Batalkan booking</i>, <i>Pesan lagi</i>.</li>
+        </ol>
+        <h4>Statuses</h4>
+        <div class="table"><table>
+          <thead><tr><th>Status</th><th>Meaning</th><th>Tab</th></tr></thead>
+          <tbody>
+            <tr><td>Menunggu pembayaran</td><td>Created, slot held, not paid yet</td><td>Akan datang</td></tr>
+            <tr><td>Lunas</td><td>Paid, slot is the player's</td><td>Akan datang</td></tr>
+            <tr><td>Selesai</td><td>Paid and the hour has passed</td><td>Selesai</td></tr>
+            <tr><td>Dibatalkan</td><td>Cancelled by the player</td><td>Dibatalkan</td></tr>
+            <tr><td>Kedaluwarsa</td><td>Hold ran out without payment</td><td>Dibatalkan</td></tr>
+          </tbody>
+        </table></div>
+        <h4>Acceptance criteria</h4>
+        <ul class="ac">
+          <li><b>Given</b> a player logs in on a new device, <b>then</b> they see all their bookings (no longer tied to one browser as in v1).</li>
+          <li><b>Given</b> a <i>Lunas</i> booking that starts in 2 hours or more, <b>when</b> the player taps <i>Batalkan booking</i> and confirms, <b>then</b> status becomes <i>Dibatalkan</i> and the slot is free for others immediately.</li>
+          <li><b>Given</b> less than 2 hours to start, <b>then</b> the cancel button is hidden and the page says "Pembatalan sudah ditutup".</li>
+          <li><b>Given</b> <i>Pesan lagi</i>, <b>then</b> the venue page opens with the same court highlighted and the nearest same weekday selected.</li>
+          <li>Empty state: "Belum ada booking" with a <i>Cari lapangan</i> button.</li>
+        </ul>
+        <h4>Migration from v1</h4>
+        <p>On first login, bookings saved in the browser's localStorage (<code>ina-bookings</code>) are not imported. They were demo bookings with no real payment.</p>
+      </article>
+
+      <!-- F7 -->
+      <article class="flow" id="f7">
+        <div class="flow-head"><h3>F7 · Profile</h3><span class="chip new">New</span><span class="chip p1">P1</span></div>
+        <p><code>/profil</code></p>
+        <ul>
+          <li>Edit nama lengkap, nomor WhatsApp, nama tim default. Email shown read-only.</li>
+          <li><i>Ubah kata sandi</i> (needs current password). Google-only accounts can set a password here.</li>
+          <li>Connected sign-in methods: Google linked / not linked.</li>
+          <li><i>Hapus akun</i>: request deletion (UU PDP). Upcoming paid bookings must be cancelled or finished first.</li>
+          <li><i>Keluar</i>.</li>
+        </ul>
+      </article>
+    </section>
+
+    <!-- 6 -->
+    <section id="data">
+      <p class="eyebrow">06</p>
+      <h2>Data model</h2>
+      <p>Moving from the browser to a database. In v1 the catalog lives in <code>src/lib/venues.ts</code>, occupancy is faked by <code>isBookedByOthers()</code> and bookings sit in localStorage; all three are replaced.</p>
+      <div class="table"><table>
+        <thead><tr><th>Entity</th><th>Key fields</th><th>Notes</th></tr></thead>
+        <tbody>
+          <tr><td>User</td><td>id, name, email, email_verified_at, phone, password_hash?, google_id?, default_team, created_at</td><td>Email unique. At least one of password or Google.</td></tr>
+          <tr><td>Venue</td><td>slug, name, sport, location, address, open, close, max_players, images, amenities, coming_soon</td><td>Seeded from <code>venues.ts</code>.</td></tr>
+          <tr><td>Court</td><td>id, venue_slug, name, surface, price_per_hour</td><td>Price snapshot is copied into each booking.</td></tr>
+          <tr><td>Booking</td><td>id (INA-…), user_id, court_id, date, hour, status, player name/email/phone, team, subtotal, fee, discount, total, voucher, hold_expires_at, created_at, cancelled_at</td><td>Unique (court_id, date, hour) among active statuses: this is the double-booking guard.</td></tr>
+          <tr><td>Payment</td><td>id, booking_id, method, provider_ref, amount, status, paid_at</td><td>Updated by the provider's webhook only.</td></tr>
+          <tr><td>Voucher</td><td>code, pct, max_discount, valid_from, valid_to, usage_limit</td><td><code>INASPORT10</code>: 10%, max Rp15.000.</td></tr>
+        </tbody>
+      </table></div>
+    </section>
+
+    <!-- 7 -->
+    <section id="nfr">
+      <p class="eyebrow">07</p>
+      <h2>Non-functional requirements</h2>
+      <div class="grid2">
+        <div class="box">
+          <h3>Accessibility &amp; device</h3>
+          <ul>
+            <li>WCAG 2.1 AA: contrast, focus visible, keyboard use of the slot grid, labels on icon buttons.</li>
+            <li>Mobile first; no horizontal page scroll at 375px.</li>
+            <li>Home and venue pages load in under 2.5 s (LCP) on 4G.</li>
+          </ul>
+        </div>
+        <div class="box">
+          <h3>Language &amp; locale</h3>
+          <ul>
+            <li>Indonesian only, friendly "kamu" tone.</li>
+            <li>All times in Asia/Jakarta (WIB). 24-hour format <code>09.00</code>.</li>
+            <li>Money as <code>Rp60.000</code>, no decimals.</li>
+          </ul>
+        </div>
+        <div class="box">
+          <h3>Security</h3>
+          <ul>
+            <li>Passwords hashed (bcrypt/argon2), never logged. HTTPS only, HttpOnly session cookies.</li>
+            <li>Login rate limit (F2). Prices, fees and totals calculated on the server.</li>
+            <li>Players can only read their own bookings.</li>
+          </ul>
+        </div>
+        <div class="box">
+          <h3>Privacy (UU PDP)</h3>
+          <ul>
+            <li>Explicit consent at registration; links to terms and privacy policy.</li>
+            <li>Collect only name, email, phone, team name.</li>
+            <li>Account deletion on request; booking records kept anonymised for finance.</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- 8 -->
+    <section id="questions">
+      <p class="eyebrow">08</p>
+      <h2>Open questions</h2>
+      <div class="table"><table>
+        <thead><tr><th>#</th><th>Question</th><th>Who decides</th></tr></thead>
+        <tbody>
+          <tr><td>1</td><td>Official hourly tariff per court, and does it differ for peak hours or weekends?</td><td>LPUK</td></tr>
+          <tr><td>2</td><td>Refund on cancellation: full, partial, or credit? How fast, and does the payment fee come back?</td><td>LPUK + finance</td></tr>
+          <tr><td>3</td><td>Payment provider (e.g. Midtrans or Xendit) and what happens to a payment that arrives after the hold expired.</td><td>Product + tech</td></tr>
+          <tr><td>4</td><td>Should a team captain be able to share a booking with teammates (view-only link or invite)?</td><td>Product</td></tr>
+          <tr><td>5</td><td>Launch date and price for Mini Soccer Cibubur.</td><td>LPUK</td></tr>
+          <tr><td>6</td><td>WhatsApp notification provider and message templates (needs Meta approval).</td><td>Tech</td></tr>
+        </tbody>
+      </table></div>
+    </section>
+
+    <!-- 9 -->
+    <section id="release">
+      <p class="eyebrow">09</p>
+      <h2>Release plan</h2>
+      <div class="table"><table>
+        <thead><tr><th>Phase</th><th>Delivers</th><th>Exit criteria</th></tr></thead>
+        <tbody>
+          <tr><td><b>1. Accounts &amp; real bookings</b></td><td>F1, F2, login gate, database, server availability, account-based history (F6 without cancel)</td><td>Two devices see the same bookings; double-booking test passes</td></tr>
+          <tr><td><b>2. Real payments</b></td><td>Payment provider, 10-minute hold, pending/paid/expired states, email + WhatsApp confirmation</td><td>Sandbox payments for all 5 methods succeed and match the shown total</td></tr>
+          <tr><td><b>3. Manage bookings</b></td><td>Cancel, Pesan lagi, Profile (F7), account deletion</td><td>Cancel frees the slot instantly; refund policy signed off</td></tr>
+        </tbody>
+      </table></div>
+      <div class="callout"><b>Next step:</b> design the new screens (Daftar, Masuk, login gate, payment instructions with countdown, Booking Saya tabs, booking detail with actions, Profil) using the INA Sports brand already in the v1 app.</div>
+    </section>
+
+  </main>
+</div>
+
+<footer>INA Sports · Dikelola oleh LPUK Kemenpora RI · PRD v0.1 (draft)</footer>
+</body>
+</html>

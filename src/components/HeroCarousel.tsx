@@ -4,7 +4,7 @@ import Image from "next/image";
 import { useEffect, useState } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import clsx from "clsx";
-import { eyebrow } from "./ui";
+import { eyebrow } from "./styles";
 
 const SLIDES = [
   { sport: "Tenis", title: "Servis terbaikmu dimulai di sini.", sub: "Lapangan hard court dan clay di jantung Senayan.", img: "/images/venues/tennis_02.webp" },

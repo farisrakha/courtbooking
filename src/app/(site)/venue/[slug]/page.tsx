@@ -4,7 +4,8 @@ import { notFound } from "next/navigation";
 import { Suspense } from "react";
 import { ArrowLeft, Check, Clock, MapPin, Users } from "lucide-react";
 import { SlotPicker, SlotPickerSkeleton } from "@/components/SlotPicker";
-import { card } from "@/components/ui";
+import { Badge } from "@/components/ui/badge";
+import { Card } from "@/components/ui/card";
 import { formatIDR, hourLabel } from "@/lib/booking";
 import { VENUES, getVenue, minPrice } from "@/lib/venues";
 
@@ -24,7 +25,7 @@ export default function VenuePage({ params }: PageProps<"/venue/[slug]">) {
       <Link href="/#venue" className="inline-flex items-center gap-2 text-sm font-medium text-integrity hover:underline">
         <ArrowLeft className="size-4" aria-hidden /> Kembali ke daftar venue
       </Link>
-      <Suspense fallback={<div className="mt-6 h-[640px] animate-pulse rounded-2xl bg-platinum" aria-label="Memuat venue" />}>
+      <Suspense fallback={<div className="mt-6 h-[640px] animate-pulse rounded-2xl bg-muted" aria-label="Memuat venue" />}>
         <VenueDetail params={params} />
       </Suspense>
     </div>
@@ -40,7 +41,7 @@ async function VenueDetail({ params }: { params: Promise<{ slug: string }> }) {
         <div className="space-y-4 lg:sticky lg:top-24">
           <div className="relative aspect-[16/10] overflow-hidden rounded-2xl bg-platinum">
             <Image src={v.images[0]} alt={v.name} fill priority sizes="(min-width: 1024px) 460px, 100vw" className="object-cover" />
-            <span className="absolute left-3 top-3 rounded-full bg-integrity px-2.5 py-1 text-xs font-semibold text-white">{v.sport}</span>
+            <Badge className="absolute left-3 top-3">{v.sport}</Badge>
           </div>
           <div className="grid grid-cols-3 gap-2">
             {v.images.slice(1, 4).map((src) => (
@@ -50,22 +51,22 @@ async function VenueDetail({ params }: { params: Promise<{ slug: string }> }) {
             ))}
           </div>
 
-          <section className={`${card} p-5`}>
+          <Card className="gap-0 rounded-2xl p-5 ring-border">
             <div className="flex items-start justify-between gap-4">
               <div>
                 <h1 className="text-2xl font-bold text-integrity">{v.name}</h1>
-                <p className="mt-1 flex items-center gap-1.5 text-sm text-muted"><MapPin className="size-4" aria-hidden />{v.address}</p>
+                <p className="mt-1 flex items-center gap-1.5 text-sm text-muted-foreground"><MapPin className="size-4" aria-hidden />{v.address}</p>
               </div>
               <p className="shrink-0 text-right">
-                <span className="block text-xs text-muted">Mulai</span>
+                <span className="block text-xs text-muted-foreground">Mulai</span>
                 <span className="text-xl font-bold text-integrity tabular-nums">{formatIDR(minPrice(v))}</span>
-                <span className="block text-xs text-muted">/jam</span>
+                <span className="block text-xs text-muted-foreground">/jam</span>
               </p>
             </div>
             <p className="mt-4 text-sm leading-relaxed">{v.description}</p>
             <div className="mt-4 flex flex-wrap gap-x-6 gap-y-2 border-y border-line py-3 text-sm">
-              <span className="flex items-center gap-2"><Clock className="size-4 text-muted" aria-hidden />{hourLabel(v.open)}–{hourLabel(v.close)}</span>
-              <span className="flex items-center gap-2"><Users className="size-4 text-muted" aria-hidden />maks. {v.maxPlayers} orang</span>
+              <span className="flex items-center gap-2"><Clock className="size-4 text-muted-foreground" aria-hidden />{hourLabel(v.open)}–{hourLabel(v.close)}</span>
+              <span className="flex items-center gap-2"><Users className="size-4 text-muted-foreground" aria-hidden />maks. {v.maxPlayers} orang</span>
             </div>
             <h2 className="mt-4 text-sm font-semibold">Fasilitas</h2>
             <ul className="mt-2 grid grid-cols-2 gap-2 text-sm">
@@ -73,14 +74,14 @@ async function VenueDetail({ params }: { params: Promise<{ slug: string }> }) {
                 <li key={a} className="flex items-center gap-2"><Check className="size-4 text-ok" aria-hidden />{a}</li>
               ))}
             </ul>
-          </section>
+          </Card>
         </div>
 
         {v.comingSoon ? (
-          <div className={`${card} p-8 text-center`}>
+          <Card className="gap-0 rounded-2xl p-8 text-center ring-border">
             <p className="text-lg font-semibold text-integrity">Segera hadir</p>
-            <p className="mt-2 text-sm text-muted">Venue ini belum bisa dipesan online. Hubungi info@inasports.id untuk jadwal dan tarif.</p>
-          </div>
+            <p className="mt-2 text-sm text-muted-foreground">Venue ini belum bisa dipesan online. Hubungi info@inasports.id untuk jadwal dan tarif.</p>
+          </Card>
         ) : (
           <Suspense fallback={<SlotPickerSkeleton />}>
             <SlotPicker venue={v} />

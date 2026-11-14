@@ -1,13 +1,16 @@
 "use client";
 
 import Link from "next/link";
-import { use, useMemo, useState } from "react";
+import { useSearchParams } from "next/navigation";
+import { use, useState } from "react";
 import { browser } from "react-dom";
 import { CalendarDays } from "lucide-react";
 import clsx from "clsx";
-import { formatDate, formatIDR, hourLabel, isBookedByOthers, isoDate, loadBookings, slotKey } from "@/lib/booking";
+import { formatDate, formatIDR, hourLabel, isSlotTaken, isoDate } from "@/lib/booking";
+import { useBookings } from "@/lib/useStore";
 import type { Venue } from "@/lib/venues";
-import { btn, card } from "./ui";
+import { buttonVariants } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
 
 const DAYS = 7;
 
@@ -19,20 +22,23 @@ export function SlotPicker({ venue }: { venue: Venue }) {
 
   const now = new Date();
   const days = Array.from({ length: DAYS }, (_, k) => isoDate(new Date(now.getFullYear(), now.getMonth(), now.getDate() + k)));
-  const [date, setDate] = useState(days[0]);
+  // "Pesan lagi" links here with ?date=&court= to preselect the day and highlight the court.
+  const params = useSearchParams();
+  const wantCourt = params.get("court");
+  const [date, setDate] = useState(() => (days.includes(params.get("date") ?? "") ? params.get("date")! : days[0]));
   const [sel, setSel] = useState<Sel>(null);
-  const mine = useMemo(() => new Set(loadBookings().map((b) => slotKey(b.venueSlug, b.courtId, b.date, b.hour))), []);
+  const bookings = useBookings(); // active holds and paid bookings in this browser count as taken
 
   const hours = Array.from({ length: venue.close - venue.open }, (_, k) => venue.open + k);
   const status = (courtId: string, hour: number) => {
     if (date === days[0] && hour <= now.getHours()) return "past";
-    if (mine.has(slotKey(venue.slug, courtId, date, hour)) || isBookedByOthers(venue.slug, courtId, date, hour)) return "booked";
+    if (isSlotTaken(venue.slug, courtId, date, hour, bookings, now)) return "booked";
     return sel?.courtId === courtId && sel.hour === hour ? "selected" : "free";
   };
   const court = venue.courts.find((c) => c.id === sel?.courtId);
 
   return (
-    <div className={`${card} p-5 sm:p-6`}>
+    <Card className="gap-0 rounded-2xl p-5 ring-border sm:p-6">
       <h2 className="flex items-center gap-2 text-lg font-semibold text-integrity">
         <CalendarDays className="size-5" aria-hidden /> Pilih jadwal
       </h2>
@@ -61,9 +67,9 @@ export function SlotPicker({ venue }: { venue: Venue }) {
       <div className="mt-6 flex flex-wrap items-end justify-between gap-2">
         <div>
           <h3 className="text-sm font-medium">Jadwal lapangan</h3>
-          <p className="text-xs text-muted">Pilih satu slot 1 jam yang tersedia.</p>
+          <p className="text-xs text-muted-foreground">Pilih satu slot 1 jam yang tersedia.</p>
         </div>
-        <ul className="flex gap-3 text-xs text-muted">
+        <ul className="flex gap-3 text-xs text-muted-foreground">
           <li className="flex items-center gap-1.5"><i className="size-3 rounded border border-ok bg-white" />Tersedia</li>
           <li className="flex items-center gap-1.5"><i className="size-3 rounded bg-integrity" />Dipilih</li>
           <li className="flex items-center gap-1.5"><i className="size-3 rounded bg-platinum ring-1 ring-line" />Penuh</li>
@@ -74,11 +80,11 @@ export function SlotPicker({ venue }: { venue: Venue }) {
         <table className="w-full border-separate border-spacing-0 text-sm">
           <thead className="sticky top-0 z-10 bg-white">
             <tr>
-              <th scope="col" className="sticky left-0 z-10 w-16 border-b border-line bg-white px-2 py-3 text-xs font-medium text-muted">Jam</th>
+              <th scope="col" className="sticky left-0 z-10 w-16 border-b border-line bg-white px-2 py-3 text-xs font-medium text-muted-foreground">Jam</th>
               {venue.courts.map((c) => (
-                <th key={c.id} scope="col" className="min-w-[128px] border-b border-l border-line px-2 py-3 text-center">
+                <th key={c.id} scope="col" className={clsx("min-w-[128px] border-b border-l border-line px-2 py-3 text-center", c.id === wantCourt && "bg-secondary")}>
                   <span className="block font-semibold text-integrity">{c.name}</span>
-                  <span className="block text-xs font-normal text-muted">{c.surface}</span>
+                  <span className="block text-xs font-normal text-muted-foreground">{c.surface}</span>
                 </th>
               ))}
             </tr>
@@ -86,7 +92,7 @@ export function SlotPicker({ venue }: { venue: Venue }) {
           <tbody>
             {hours.map((h) => (
               <tr key={h}>
-                <th scope="row" className="sticky left-0 border-b border-line bg-white px-2 text-center text-xs font-medium tabular-nums text-muted">{hourLabel(h)}</th>
+                <th scope="row" className="sticky left-0 border-b border-line bg-white px-2 text-center text-xs font-medium tabular-nums text-muted-foreground">{hourLabel(h)}</th>
                 {venue.courts.map((c) => {
                   const s = status(c.id, h);
                   const disabled = s === "past" || s === "booked";
@@ -102,7 +108,7 @@ export function SlotPicker({ venue }: { venue: Venue }) {
                           "w-full rounded-lg px-2 py-2 text-left transition-colors",
                           s === "free" && "border border-ok/40 bg-white hover:border-ok hover:bg-ok-soft",
                           s === "selected" && "bg-integrity text-white",
-                          disabled && "cursor-not-allowed bg-platinum text-muted/70",
+                          disabled && "cursor-not-allowed bg-platinum text-muted-foreground/70",
                         )}
                       >
                         <span className="block text-xs font-semibold tabular-nums">{formatIDR(c.price)}</span>
@@ -121,9 +127,9 @@ export function SlotPicker({ venue }: { venue: Venue }) {
 
       {sel && court && (
         <dl className="mt-5 grid grid-cols-[auto_1fr] gap-x-4 gap-y-1 rounded-xl bg-integrity-soft p-4 text-sm">
-          <dt className="text-muted">Lapangan</dt><dd className="text-right font-medium">{court.name} · {court.surface}</dd>
-          <dt className="text-muted">Tanggal</dt><dd className="text-right font-medium">{formatDate(date)}</dd>
-          <dt className="text-muted">Jam</dt><dd className="text-right font-medium tabular-nums">{hourLabel(sel.hour)}–{hourLabel(sel.hour + 1)}</dd>
+          <dt className="text-muted-foreground">Lapangan</dt><dd className="text-right font-medium">{court.name} · {court.surface}</dd>
+          <dt className="text-muted-foreground">Tanggal</dt><dd className="text-right font-medium">{formatDate(date)}</dd>
+          <dt className="text-muted-foreground">Jam</dt><dd className="text-right font-medium tabular-nums">{hourLabel(sel.hour)}–{hourLabel(sel.hour + 1)}</dd>
           <dt className="mt-2 border-t border-integrity/10 pt-2 font-semibold">Total</dt>
           <dd className="mt-2 border-t border-integrity/10 pt-2 text-right text-base font-bold text-integrity tabular-nums">{formatIDR(court.price)}</dd>
         </dl>
@@ -132,17 +138,17 @@ export function SlotPicker({ venue }: { venue: Venue }) {
       {sel ? (
         <Link
           href={`/checkout?venue=${venue.slug}&court=${sel.courtId}&date=${date}&hour=${sel.hour}`}
-          className={clsx(btn("primary", "lg"), "mt-5 w-full")}
+          className={buttonVariants({ variant: "cta", size: "lg", className: "mt-5 w-full" })}
         >
           Lanjut ke pembayaran
         </Link>
       ) : (
-        <button type="button" disabled className={clsx(btn("primary", "lg"), "mt-5 w-full")}>Pilih slot dulu</button>
+        <button type="button" disabled className={buttonVariants({ variant: "cta", size: "lg", className: "mt-5 w-full" })}>Pilih slot dulu</button>
       )}
-    </div>
+    </Card>
   );
 }
 
 export function SlotPickerSkeleton() {
-  return <div className={`${card} h-[640px] animate-pulse bg-platinum`} aria-label="Memuat jadwal" />;
+  return <div className="h-[640px] animate-pulse rounded-2xl bg-muted" aria-label="Memuat jadwal" />;
 }

@@ -1,24 +1,85 @@
 @import "tailwindcss";
+@import "tw-animate-css";
+@import "shadcn/tailwind.css";
 
-/* INA Sports brand tokens, lifted from inasports.vercel.app (see PRODUCT.md). */
+/* Light only. Class-based so shadcn's dark: classes never fire from the OS setting. */
+@custom-variant dark (&:is(.dark *));
+
+/*
+  INA Sports brand (from inasports.vercel.app, see PRODUCT.md), exposed under shadcn's token names
+  so shadcn components come out on-brand. Use the shadcn names in new code (bg-primary,
+  text-muted-foreground, border-border); the INA names stay for brand-specific spots.
+*/
+:root {
+  --background: #ffffff;
+  --foreground: #16163a;          /* ink */
+  --card: #ffffff;
+  --card-foreground: #16163a;
+  --popover: #ffffff;
+  --popover-foreground: #16163a;
+  --primary: #212163;             /* integrity navy */
+  --primary-foreground: #ffffff;
+  --secondary: #ecebf5;           /* integrity-soft */
+  --secondary-foreground: #212163;
+  --muted: #f3f3f3;               /* platinum surface */
+  --muted-foreground: #5b5b78;    /* secondary text, AA on white */
+  --accent: #ecebf5;
+  --accent-foreground: #212163;
+  --destructive: #a80000;         /* victory-dark: cancel, errors */
+  --border: #e2e2ea;
+  --input: #e2e2ea;
+  --ring: #212163;
+  --radius: 0.75rem;
+}
+
 @theme inline {
   --font-sans: var(--font-dm-sans), ui-sans-serif, system-ui, sans-serif;
+  --font-heading: var(--font-sans);
 
+  /* shadcn tokens */
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+
+  /* INA brand names */
   --color-integrity: #212163;      /* navy: primary, headings, selected */
   --color-integrity-deep: #14143f; /* footer, hero overlay */
   --color-integrity-soft: #ecebf5; /* selected/hover tint */
   --color-ink: #16163a;            /* body text */
-  --color-muted: #5b5b78;          /* secondary text, AA on white */
   --color-line: #e2e2ea;
   --color-platinum: #f3f3f3;       /* page surface */
-  --color-victory: #d60000;        /* red: primary CTA, accents only */
+  --color-victory: #d60000;        /* red: the one primary CTA per screen */
   --color-victory-dark: #a80000;
   --color-ok: #13805f;             /* available / success */
   --color-ok-soft: #e6f4ef;
+
+  --radius-sm: calc(var(--radius) * 0.6);
+  --radius-md: calc(var(--radius) * 0.8);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) * 1.4);
+  --radius-2xl: calc(var(--radius) * 1.8);
 }
 
-html { scroll-behavior: smooth; }
-body { background: #fff; color: var(--color-ink); }
+@layer base {
+  * { @apply border-border outline-ring/50; }
+  html { @apply font-sans; scroll-behavior: smooth; }
+  body { @apply bg-background text-foreground; }
+}
 
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }
