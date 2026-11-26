@@ -16,7 +16,7 @@ const STEPS = [
 
 const BENEFITS = [
   { icon: ShieldCheck, t: "Venue resmi milik negara", d: "Dikelola LPUK Kemenpora di kawasan Senayan dan Cibubur. Harga jelas, tanpa calo." },
-  { icon: CalendarClock, t: "Jam kosong terlihat jelas", d: "Lihat jadwal tiap lapangan untuk 7 hari ke depan, pilih satu jam, beres." },
+  { icon: CalendarClock, t: "Jam kosong terlihat jelas", d: "Lihat jadwal tiap lapangan untuk 7 hari ke depan, pilih slot 2 jam, beres." },
   { icon: Wallet, t: "Bayar cara apa saja", d: "Pakai metode yang biasa kamu pakai. Kode booking langsung terbit setelah bayar." },
 ];
 
@@ -25,7 +25,9 @@ const PAYMENTS = ["QRIS", "GoPay", "DANA", "OVO", "BCA Virtual Account", "Mandir
 
 // Keep in sync with PAYMENT_METHODS / VOUCHERS in src/lib/booking.ts and the PRD.
 const FAQ = [
-  { q: "Bagaimana cara booking lapangan?", a: "Pilih venue, pilih tanggal dan jam yang masih kosong di jadwal, isi data pemain, lalu bayar. Kode booking langsung muncul setelah pembayaran berhasil." },
+  { q: "Bagaimana cara booking lapangan?", a: "Pilih venue, pilih tanggal dan slot 2 jam yang masih kosong di jadwal, isi data pemain, lalu bayar. Panjat tebing memakai tiket harian per kedatangan. Kode booking langsung muncul setelah pembayaran berhasil." },
+  { q: "Apakah harganya sama setiap hari?", a: "Tidak selalu. Tenis dan bulu tangkis punya tarif akhir pekan, GOR POPKI punya tarif peak hour di sore dan malam hari, dan Aquatic serta Panahan membedakan sewa perorangan dan sewa klub. Harga tiap slot terlihat di jadwal." },
+  { q: "Bisakah menyewa venue untuk event, tribun, atau ujian?", a: "Bisa. Pilih tab Sewa Event, Tribun & Ruangan, pilih paket (12 jam atau 1 hari/16 jam) dan tanggal acara. Kamu bisa bayar lunas atau DP 50%. Tarif belum termasuk pajak, listrik, air, dan service charge, dan ada Uang Jaminan 30% yang dibayar terpisah." },
   { q: "Metode pembayaran apa saja yang bisa dipakai?", a: "QRIS dan e-wallet (GoPay, DANA, OVO) tanpa biaya tambahan. BCA dan Mandiri Virtual Account dikenai biaya Rp6.000. Kartu debit/kredit dikenai biaya 2,9% + Rp2.000." },
   { q: "Apakah saya perlu punya akun?", a: "Kamu bisa melihat venue dan jadwal tanpa akun. Untuk membayar, masuk atau daftar dulu dengan Google atau email, supaya semua booking tersimpan di Booking Saya." },
   { q: "Bisakah booking dibatalkan?", a: "Bisa, paling lambat 2 jam sebelum jadwal mulai, lewat halaman Booking Saya. Setelah itu slot dibuka lagi untuk pemain lain." },

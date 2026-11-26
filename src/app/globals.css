@@ -85,3 +85,8 @@
   html { scroll-behavior: auto; }
   *, *::before, *::after { transition: none !important; animation: none !important; }
 }
+
+/* UI-12: keep the footer reachable above the phone sticky booking bar. */
+@media (width < 40rem) {
+  body:has([data-sticky-bar]) { padding-bottom: 6rem; }
+}

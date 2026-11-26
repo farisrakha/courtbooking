@@ -3,14 +3,22 @@
 import { useState } from "react";
 import { ExternalLink, Monitor, RotateCw, Smartphone } from "lucide-react";
 import clsx from "clsx";
-import { isBookedByOthers, isoDate } from "@/lib/booking";
+import { isBookedByOthers, isDayLocked, isoDate } from "@/lib/booking";
 
 /** First free slot tomorrow at Bulu Tangkis Senayan, so the checkout preview always has a valid slot. */
 function checkoutPath() {
   const d = new Date();
   const date = isoDate(new Date(d.getFullYear(), d.getMonth(), d.getDate() + 1));
-  const hour = [18, 19, 20, 17, 16, 15, 14, 9, 10].find((h) => !isBookedByOthers("bulu-tangkis-senayan", "b1", date, h)) ?? 18;
+  const hour = [17, 19, 15, 13, 11, 9].find((h) => !isBookedByOthers("bulu-tangkis-senayan", "b1", date, h)) ?? 17;
   return `/checkout?venue=bulu-tangkis-senayan&court=b1&date=${date}&hour=${hour}`;
+}
+
+/** Two free event days at GOR POPKI from next week (ignores this browser's own bookings). */
+function eventCheckoutPath() {
+  const d = new Date();
+  const dates = Array.from({ length: 30 }, (_, k) => isoDate(new Date(d.getFullYear(), d.getMonth(), d.getDate() + 7 + k)))
+    .filter((x) => !isDayLocked("gor-popki-cibubur", x, [])).slice(0, 2);
+  return `/checkout?venue=gor-popki-cibubur&pkg=event-16&dates=${dates.join(",")}`;
 }
 
 const PAGES: { label: string; path: string | (() => string) }[] = [
@@ -21,7 +29,11 @@ const PAGES: { label: string; path: string | (() => string) }[] = [
   { label: "Verifikasi email", path: "/verifikasi-email" },
   { label: "Lupa sandi", path: "/lupa-sandi" },
   { label: "Detail venue", path: "/venue/bulu-tangkis-senayan" },
+  { label: "Detail venue (event)", path: "/venue/gor-popki-cibubur?mode=event" },
+  { label: "Detail venue (klub)", path: "/venue/aquatic-cibubur" },
+  { label: "Detail venue (ruangan)", path: "/venue/mezzanine-gor-utara" },
   { label: "Pembayaran", path: checkoutPath },
+  { label: "Pembayaran event", path: eventCheckoutPath },
   { label: "Booking Saya", path: "/bookings" },
   { label: "Profil", path: "/profil" },
 ];

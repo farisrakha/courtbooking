@@ -10,7 +10,7 @@ import {
   PASSWORD_HINT, findUser, googleSignIn, login, normalizePhone, passwordOk, phoneOk,
   register, requestReset, resendVerify, resetPassword, safeNext, updateUser, verifyEmail, verifyTokenOwner,
 } from "@/lib/auth";
-import { formatDate, hourLabel } from "@/lib/booking";
+import { blockLength, formatDate, hourLabel } from "@/lib/booking";
 import { getVenue } from "@/lib/venues";
 import { useUser } from "@/lib/useStore";
 import { AuthCard } from "./AuthCard";
@@ -266,15 +266,21 @@ function GateSummary({ next }: { next: string }) {
   if (!next.startsWith("/checkout?")) return null;
   const p = new URLSearchParams(next.split("?")[1]);
   const v = getVenue(p.get("venue") ?? "");
+  const pkg = v?.packages?.find((x) => x.id === p.get("pkg"));
   const court = v?.courts.find((c) => c.id === p.get("court"));
-  const date = p.get("date") ?? "";
+  const dates = (pkg ? p.get("dates") ?? "" : p.get("date") ?? "").split(",");
   const hour = Number(p.get("hour"));
-  if (!v || !court || !/^\d{4}-\d{2}-\d{2}$/.test(date)) return null;
+  if (!v || !(pkg || court) || !dates.every((d) => /^\d{4}-\d{2}-\d{2}$/.test(d))) return null;
+  const day = (d: string) => formatDate(d, { weekday: "short", day: "numeric", month: "short" });
   return (
     <div className="mb-5 rounded-xl bg-secondary p-4 text-sm">
-      <p className="font-semibold text-primary">Slot kamu tetap tersimpan</p>
+      <p className="font-semibold text-primary">{pkg ? "Tanggal acaramu" : "Slot kamu"} tetap tersimpan</p>
       <p className="mt-1 text-secondary-foreground/80">
-        {v.name} · {court.name} · {formatDate(date, { weekday: "short", day: "numeric", month: "short" })} · <span className="tabular-nums">{hourLabel(hour)}–{hourLabel(hour + 1)}</span>
+        {pkg ? (
+          <>{v.name} · {pkg.label} · {dates.map(day).join(" · ")}</>
+        ) : (
+          <>{v.name} · {court!.name}{p.get("tier") === "klub" ? " (Sewa Klub)" : ""} · {day(dates[0])} · <span className="tabular-nums">{hourLabel(hour)}–{hourLabel(hour + blockLength(v))}</span></>
+        )}
       </p>
     </div>
   );
